@@ -3,7 +3,7 @@
 -- WHERE(departmentId, salary) IN
 -- (SELECT departmentId,MAX(salary) FROM Employee GROUP BY departmentId) ;
 
-WITH max_sal AS (
+WITH cte AS (
     SELECT *,
         RANK() OVER(PARTITION BY departmentId ORDER BY salary DESC)
         AS rn
@@ -12,9 +12,9 @@ WITH max_sal AS (
 
 SELECT 
     d.name AS Department,
-    max_sal.name AS Employee,
-    max_sal.salary AS Salary
-FROM max_sal
+    cte.name AS Employee,
+    cte.salary AS Salary
+FROM cte
 JOIN Department d
-ON d.id = max_sal.departmentId
+ON d.id = cte.departmentId
 WHERE rn = 1;
